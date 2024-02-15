@@ -1,290 +1,306 @@
 // DOM tới 1 thẻ
 function getElement(id) {
-    return document.getElementById(id)
+  return document.getElementById(id);
 }
 
 // Khởi tạo đối tượng nhansuQL từ lớp NhanSuQL
-var nhansuQL = new NhanSuQL()
+var nhansuQL = new NhanSuQL();
 
 // Khởi tạo đối tượng validation từ lớp Validation
-var validation = new Validation()
-
+var validation = new Validation();
 
 // Lấy thông tin từ UI
 function layThongTinNS(isAdd) {
-    // isAdd = true => thêm nhân sự
-    // isAdd = false => cập nhập nhân sự
+  // isAdd = true => thêm nhân sự
+  // isAdd = false => cập nhập nhân sự
 
-    var maSV = getElement('txtMaSV').value
-    var tenSV = getElement('txtTenSV').value
-    var email = getElement('txtEmail').value
-    var matKhau = getElement('txtPass').value
-    var ngaySinh = getElement('txtNgaySinh').value
-    var khoaHoc = getElement('khSV').value
-    var diemToan = getElement('txtDiemToan').value * 1
-    var diemHoa = getElement('txtDiemHoa').value * 1
-    var diemLy = getElement('txtDiemLy').value * 1
-    var isValid = true
+  var taiKhoan = getElement("tknv").value;
+  var hoTen = getElement("name").value;
+  var eMail = getElement("email").value;
+  var matKhau = getElement("password").value;
+  var ngayLam = getElement("datepicker").value;
+  var luongCB = getElement("luongCB").value * 1;
+  var chucVu = getElement("chucvu").value;
+  var gioLam = getElement("gioLam").value * 1;
+  var isValid = true;
 
-    // Kiểm tra tài khoản nhân sự
-    if (isAdd) {
-        isValid &=
-            validation.kiemTraRong(maSV, 'spanMaSV', 'Mã sinh viên không được bỏ trống') && // false
-            validation.kiemTraDoDai(maSV, 'spanMaSV', 'Mã sinh viên từ 6 đến 10 ký tự', 6, 10) &&
-            // validation.kiemTraSo(maSV, 'spanMaSV', 'Mã sinh viên phải là số')
-            validation.kiemTraPattern(maSV, 'spanMaSV', 'Mã sinh viên phải là số', /^[0-9]+$/) &&
-            validation.kiemTrMaSVTrung(maSV, nhansuQL.listSV, 'spanMaSV', 'Mã sinh viên đã tồn tại')
-    }
-
-    // Kiểm tra họ tên nhân sự
-    isValid &= validation.kiemTraRong(tenSV, 'spanTenSV', 'Tên sinh viên không được bỏ trống') // false
-
-    //Kiểm tra email
+  // Kiểm tra tài khoản nhân sự
+  if (isAdd) {
     isValid &=
-        validation.kiemTraRong(email, 'spanEmailSV', 'Email không được bỏ trống') &&
-        validation.kiemTraPattern(
-            email,
-            'spanEmailSV',
-            'Email không đúng định dạng',
-            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-        )
+      validation.kiemRong(
+        taiKhoan,
+        "tbTKNV",
+        "Tài khoản không được bỏ trống"
+      ) &&
+      validation.kiemDoDai(
+        taiKhoan,
+        "tbTKNV",
+        "Tài khoản từ 4 đến 6 ký tự",
+        4,
+        6
+      ) &&
+      validation.kiemPattern(
+        taiKhoan,
+        "tbTKNV",
+        "Tài khoản phải là số",
+        /^[0-9]+$/
+      ) &&
+      validation.kiemTrungTk(
+        taiKhoan,
+        nhansuQL.nhansuDS,
+        "tbTKNV",
+        "Tài khoản đã tồn tại"
+      );
+  }
 
-    // Kiểm tra điểm toán
-    isValid &= validation.kiemTraSo(diemToan, 'spanToan', 'Điểm toán phải là số')
+  // Kiểm tra họ tên nhân sự
+  isValid &= validation.kiemRong(hoTen, "tbTen", "Họ tên không được bỏ trống");
 
-    // Kiểm tra khóa học
+  //Kiểm tra email
+  isValid &=
+    validation.kiemRong(eMail, "tbEmail", "Email không được bỏ trống") &&
+    validation.kiemPattern(
+      eMail,
+      "tbEmail",
+      "Email không đúng định dạng",
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+    );
 
-    isValid &= validation.kiemTraKhoaHoc('khSV', 'spanKhoaHoc', 'Vui lòng chọn khóa học')
+  // Kiểm tra lương cơ bản
+  isValid &= validation.kiemSo(luongCB, "tbLuongCB", "Lương cơ bản phải là số");
 
-    // Tạo một đối tượng sv từ lớp đối tượng sv
-    // check isValid => nếu false => return về null
-    if (!isValid) {
-        return null
-    }
+  // Kiểm tra giờ làm
+  isValid &= validation.kiemSo(gioLam, "tbGiolam", "Giờ làm phải là số");
 
-    var sinhVien = new SinhVien(
-        maSV,
-        tenSV,
-        email,
-        matKhau,
-        ngaySinh,
-        khoaHoc,
-        diemToan,
-        diemLy,
-        diemHoa
-    )
+  // Kiểm tra chức vụ
+  isValid &= validation.kiemChucVu(
+    "chucvu",
+    "tbChucVu",
+    "Vui lòng chọn chức vụ"
+  );
 
-    // Tính điểm TB của SV
-    sinhVien.tinhDiemTB()
+  // Tạo một đối tượng nhân sự từ lớp đối tượng Nhân Sự
+  if (!isValid) {
+    return null;
+  }
 
-    // console.log('sinhVien', sinhVien)
-    return sinhVien
+  var nhanSu = new NhanSu(
+    taiKhoan,
+    hoTen,
+    eMail,
+    matKhau,
+    ngayLam,
+    luongCB,
+    chucVu,
+    gioLam
+  );
+
+  // Tính điểm TB của SV
+  nhanSu.tinhLuongThang();
+  nhanSu.xepLoai();
+
+  return nhanSu;
 }
 
 // Render danh sách sinh viên
-function renderDSSV(arrSV = nhansuQL.listSV) {
-    // duyệt mảng listSV
-    var content = ''
-    for (var i = 0; i < arrSV.length; i++) {
-        var sinhVien = arrSV[i]
-        content += `
+function renderNhanSuDS(arrNS = nhansuQL.nhansuDS) {
+  var content = "";
+  for (var i = 0; i < arrNS.length; i++) {
+    var nhanSu = arrNS[i];
+    content += `
             <tr>
-                <td>${sinhVien.maSV}</td>
-                <td>${sinhVien.tenSV}</td>
-                <td>${sinhVien.email}</td>
-                <td>${sinhVien.ngaySinh}</td>
-                <td>${sinhVien.khoaHoc}</td>
-                <td>${sinhVien.dtb.toFixed(2)}</td>
+                <td>${nhanSu.taiKhoan}</td>
+                <td>${nhanSu.hoTen}</td>
+                <td>${nhanSu.eMail}</td>
+                <td>${nhanSu.ngayLam}</td>
+                <td>${nhanSu.chucVu}</td>
+                <td>${nhanSu.luongThang}</td>
+                <td>${nhanSu.loaiNV}</td>
                 <td>
                     <button 
                         class="btn btn-danger" 
-                        onclick="deleteSV('${sinhVien.maSV}')"
+                        onclick="deleteStaff('${nhanSu.taiKhoan}')"
                     >
                         Delete
                     </button>
                     <button 
                         class="btn btn-success ml-3" 
-                        onclick="editSV('${sinhVien.maSV}')"
+                        onclick="editStaff('${nhanSu.taiKhoan}')"
                     >
                         Edit
                     </button>
                 </td>
             </tr>
-        `
-    }
-    
-    getElement('tbodySinhVien').innerHTML = content
+        `;
+  }
+
+  getElement("tableDanhSach").innerHTML = content;
 }
 
-// renderDSSV()
 
-// btn Thêm sinh viên
-getElement('btnThemSV').onclick = function () {
-    // B1: lấy thông tin sinh viên từ hàm layThongTinSV
-    var sinhVien = layThongTinSV(true)
-    
-    if (sinhVien) {
-        //B2: Thêm sinhVien vào trong nhansuQL
-        nhansuQL.themSV(sinhVien)
-        
-        // Hiển thị danh sách nhân sự ra ngoài UI
-        renderDSSV()
+// btn Thêm nhân sự
+getElement("btnThem").onclick = function () {
+  // B1: lấy thông tin nhân sự từ hàm layThongTinNS
+  var nhanSu = layThongTinNS(true);
 
-        // Lưu danh sách nhân sự vào local storage
-        setLocalStorage()
+  if (nhanSu) {
+    //B2: Thêm nhanSu vào trong nhansuDS
+    nhansuQL.themNS(nhanSu);
 
-        // reset form
-        resetForm()
-    }
-}
+    // Hiển thị danh sách nhân sự ra ngoài UI
+    renderNhanSuDS();
 
-// Xóa sinh viên
-function deleteSV(maSV) {
-    nhansuQL.xoaSV(maSV)
+    // Lưu danh sách nhân sự vào local storage
+    setLocalStorage();
 
-    // Cập nhật lại hiển thị sau khi xóa sv thành công
-    renderDSSV()
+    // reset form
+    resetForm();
+  }
+};
 
-    //  Lưu lại danh sách nhân sự vào local storage
-    setLocalStorage()
+// Xóa nhân sự
+function deleteStaff(taiKhoan) {
+  nhansuQL.xoaNS(taiKhoan);
+
+  // Cập nhật lại hiển thị sau khi xóa nhân sự thành công
+  renderNhanSuDS();
+
+  //  Lưu lại danh sách nhân sự vào local storage
+  setLocalStorage();
 }
 
 // Cập nhật sinh viên
-function editSV(maSV) {
-    // Ẩn button thêm sinh viên
-    getElement('btnThemSV').style.display = 'none'
+function editStaff(taiKhoan) {
+  // Ẩn button thêm sinh viên
+  getElement("btnThemNV").style.display = "none";
 
-    // Hiển thị lại button cập nhật sinh viên
-    getElement('btnUpdate').classList.remove('d-none')
+  // Hiển thị lại button cập nhật nhân sự
+  getElement("btnCapNhat").classList.remove("d-none");
 
-    // disabled input mã SV
-    getElement('txtMaSV').disabled = true
+  // Vô hiệu hóa ô nhập tài khoản
+  getElement("tknv").disabled = true;
 
-    //Tìm index của SV
-    var index = nhansuQL.timViTriSV(maSV)
+  //Tìm index của nhân sự
+  var index = nhansuQL.timViTriNS(taiKhoan);
 
-    // Lấy thông tin SV
-    var sinhVien = nhansuQL.listSV[index]
+  // Lấy thông tin nhân sự
+  var nhanSu = nhansuQL.nhansuDS[index];
 
-    //Hiển thị thông tin SV lên form
-    getElement('txtMaSV').value = sinhVien.maSV
-    getElement('txtTenSV').value = sinhVien.tenSV
-    getElement('txtEmail').value = sinhVien.email
-    getElement('txtPass').value = sinhVien.matKhau
-    getElement('txtNgaySinh').value = sinhVien.ngaySinh
-    getElement('khSV').value = sinhVien.khoaHoc
-    getElement('txtDiemToan').value = sinhVien.diemToan
-    getElement('txtDiemHoa').value = sinhVien.diemHoa
-    getElement('txtDiemLy').value = sinhVien.diemLy
+  //Hiển thị thông tin SV lên form
+  getElement("tknv").value = nhanSu.taiKhoan;
+  getElement("name").value = nhanSu.hoTen;
+  getElement("email").value = nhanSu.eMail;
+  getElement("password").value = nhanSu.matKhau;
+  getElement("datepicker").value = nhanSu.ngayLam;
+  getElement("luongCB").value = nhanSu.luongCB;
+  getElement("chucvu").value = nhanSu.chucVu;
+  getElement("gioLam").value = nhanSu.gioLam;
 }
 
+getElement("btnUpdate").onclick = function () {
+  //Lấy lại thông tin mới của SV sau chỉnh sửa
+  var newStaff = layThongTinNS(false);
 
-getElement('btnUpdate').onclick = function () {
-    //Lấy lại thông tin mới của SV sau chỉnh sửa
-    var newSV = layThongTinSV(false)
+  if (newStaff) {
+    nhansuQL.capNhatNS(newStaff);
 
-    if (newSV) {
-        nhansuQL.capNhatSV(newSV)
+    // cập nhật lại hiển thị ui
+    renderNhanSuDS();
 
-        // cập nhật lại hiển thị ui
-        renderDSSV()
+    // lưu lại danh sách nhân sự mới vào local storage
+    setLocalStorage();
 
-        // lưu lại danh sách nhân sự mới vào local storage
-        setLocalStorage()
+    // Hiển thị lại btn thêm nhân sự
+    getElement("btnThemNV").style.display = "inline-block";
 
-        // Hiển thị lại btn thêm sinh viên
-        getElement('btnThemSV').style.display = 'inline-block'
+    // Ẩn btn cập nhật
+    getElement("btnCapNhat").classList.add("d-none");
 
-        // Ẩn btn cập nhật
-        getElement('btnUpdate').classList.add('d-none')
+    // Kích hoạt ô nhập tài khoản
+    getElement("tknv").disabled = false;
 
-        // enabled input mã SV
-        getElement('txtMaSV').disabled = false
+    // reset form
+    resetForm();
+  }
+};
 
-        // reset form
-        resetForm()
-    }
-}
-
-// Lưu local storage
+// Lưu xuống local storage
 function setLocalStorage() {
-    // Lưu danh sách nhân sự vào local storage
-    //B1: chuyển data về string
-    var dtString = JSON.stringify(nhansuQL.listSV)
-    //B2: Lưu vào local storage
-    localStorage.setItem('nhansuDS', dtString)
+  // Lưu danh sách nhân sự vào local storage
+  //B1: chuyển data về string
+  var dtString = JSON.stringify(nhansuQL.nhansuDS);
+  //B2: Lưu vào local storage
+  localStorage.setItem("nhansuDS", dtString);
 }
 
 function getLocalStorage() {
-    //B1: lấy data dưới local storage
-    var data = localStorage.getItem('nhansuDS')
+  //B1: lấy data dưới local storage
+  var data = localStorage.getItem("nhansuDS");
 
-    //B2: Parse data về kiểu dữ liệu ban đầu
-    if (data !== null) {
-        var dataParse = JSON.parse(data)
+  //B2: Parse data về kiểu dữ liệu ban đầu
+  if (data !== null) {
+    var dataParse = JSON.parse(data);
 
-        // Hiển thị danh sách nhân sự đã lưu ra UI
-        nhansuQL.listSV = dataParse
+    // Hiển thị danh sách nhân sự đã lưu ra UI
+    nhansuQL.nhansuDS = dataParse;
 
-        renderDSSV()
-    }
+    renderNhanSuDS();
+  }
 }
 
-getLocalStorage()
+getLocalStorage();
 
 // reset form
-
 function resetForm() {
-    getElement('formQLSV').reset()
+  getElement("formNS").reset();
 }
 
 // Tìm kiếm sinh viên theo tên
-getElement('txtSearch').onkeyup = function () {
-    var valueSearch = getElement('txtSearch').value
+getElement("txtSearch").onkeyup = function () {
+  var valueSearch = getElement("txtSearch").value;
 
-    // chuyển valueSearch về lowercase
-    var valueSearchLowerCase = valueSearch.toLowerCase()
-    
-    // Duyệt mảng danh sách nhân sự
-    var nhansuDSSearch = []
+  // chuyển valueSearch về lowercase
+  var valueSearchLowerCase = valueSearch.toLowerCase();
 
-    for (var i = 0; i < nhansuQL.listSV.length; i++) {
-        var sv = nhansuQL.listSV[i]
+  // Duyệt mảng danh sách nhân sự
+  var nhansuDSSearch = [];
 
-        // chuyển tên sinh Viên về dạng lowercase
-        var tenSVLowerCase = sv.tenSV.toLowerCase()
+  for (var i = 0; i < nhansuQL.nhansuDS.length; i++) {
+    var nhanSu = nhansuQL.nhansuDS[i];
 
-        // Nếu tên sv chứa toàn bộ ký tự của value search
-        if (tenSVLowerCase.indexOf(valueSearchLowerCase) !== -1) {
-            nhansuDSSearch.push(sv)
-        }
+    // chuyển tên sinh Viên về dạng lowercase
+    var tenSVLowerCase = nhanSu.hoTen.toLowerCase();
+
+    // Nếu tên sv chứa toàn bộ ký tự của value search
+    if (tenSVLowerCase.indexOf(valueSearchLowerCase) !== -1) {
+      nhansuDSSearch.push(nhanSu);
     }
+  }
 
-    // render UI lại danh sách nhân sự theo kết quả tìm kiếm
-    renderDSSV(nhansuDSSearch)
-}
+  // render UI lại danh sách nhân sự theo kết quả tìm kiếm
+  renderNhanSuDS(nhansuDSSearch);
+};
 
-getElement('btnSearch').onclick = function () {
-    var valueSearch = getElement('txtSearch').value
+getElement("btnSearch").onclick = function () {
+  var valueSearch = getElement("txtSearch").value;
 
-    // chuyển valueSearch về lowercase
-    var valueSearchLowerCase = valueSearch.toLowerCase()
-    
-    var nhansuDSSearch = []
+  // chuyển valueSearch về lowercase
+  var valueSearchLowerCase = valueSearch.toLowerCase();
 
-    for (var i = 0; i < nhansuQL.listSV.length; i++) {
-        var sv = nhansuQL.listSV[i]
+  var nhansuDSSearch = [];
 
-        // chuyển tên sinh Viên về dạng lowercase
-        var tenSVLowerCase = sv.tenSV.toLowerCase()
-        console.log('tenSVLowerCase: ', tenSVLowerCase)
+  for (var i = 0; i < nhansuQL.listSV.length; i++) {
+    var sv = nhansuQL.listSV[i];
 
-        // Nếu tên sv chứa toàn bộ ký tự của value search
-        if (tenSVLowerCase.indexOf(valueSearchLowerCase) !== -1) {
-            nhansuDSSearch.push(sv)
-        }
+    // chuyển tên sinh Viên về dạng lowercase
+    var tenSVLowerCase = sv.tenSV.toLowerCase();
+
+    // Nếu tên sv chứa toàn bộ ký tự của value search
+    if (tenSVLowerCase.indexOf(valueSearchLowerCase) !== -1) {
+      nhansuDSSearch.push(nhanSu);
     }
+  }
 
-    // render UI lại danh sách nhân sự theo kết quả tìm kiếm
-    renderDSSV(nhansuDSSearch)
-}
+  // render UI lại danh sách nhân sự theo kết quả tìm kiếm
+  renderNhanSuDS(nhansuDSSearch);
+};

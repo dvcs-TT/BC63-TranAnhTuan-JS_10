@@ -1,5 +1,5 @@
 function Validation() {
-    this.kiemTraRong = function (value, elementErrorId, messagError) {
+    this.kiemRong = function (value, elementErrorId, messagError) {
         if (value === '') {
             getElement(elementErrorId).innerHTML = messagError
             return false
@@ -9,7 +9,7 @@ function Validation() {
         return true
     }
 
-    this.kiemTraDoDai = function (value, elementErrorId, messagError, min, max) {
+    this.kiemDoDai = function (value, elementErrorId, messagError, min, max) {
         if (value.length < min || value.length > max) {
             getElement(elementErrorId).innerHTML = messagError
             return false
@@ -19,7 +19,7 @@ function Validation() {
         return true
     }
 
-    this.kiemTraSo = function (value, elementErrorId, messagError) {
+    this.kiemSo = function (value, elementErrorId, messagError) {
         var pattern = /^[0-9]+$/
         var stringifiedValue = value.toString()
 
@@ -32,7 +32,7 @@ function Validation() {
         return false
     }
 
-    this.kiemTraPattern = function (value, elementErrorId, messagError, pattern) {
+    this.kiemPattern = function (value, elementErrorId, messagError, pattern) {
         if (value.match(pattern)) {
             getElement(elementErrorId).innerHTML = ''
             return true
@@ -42,7 +42,7 @@ function Validation() {
         return false
     }
 
-    this.kiemTrMaSVTrung = function (taiKhoan, nhansuDS, elementErrorId, messagError) {
+    this.kiemTrungTk = function (taiKhoan, nhansuDS, elementErrorId, messagError) {
         var index = -1
 
         for (var i = 0; i < nhansuDS.length; i++) {
@@ -62,7 +62,7 @@ function Validation() {
         return false
     }
 
-    this.kiemTraChucVu = function (idSelect, elementErrorId, messagError) {
+    this.kiemChucVu = function (idSelect, elementErrorId, messagError) {
         var selectedIndex = getElement(idSelect).selectedIndex
 
         if (!selectedIndex) {
