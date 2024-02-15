@@ -32,6 +32,16 @@ function Validation() {
         return false
     }
 
+    this.kiemKhoangGtri = function (value, elementErrorId, messagError, min, max) {
+        if (value < min || value > max) {
+            getElement(elementErrorId).innerHTML = messagError
+            return false
+        }
+
+        getElement(elementErrorId).innerHTML = ''
+        return true
+    }
+
     this.kiemPattern = function (value, elementErrorId, messagError, pattern) {
         if (value.match(pattern)) {
             getElement(elementErrorId).innerHTML = ''

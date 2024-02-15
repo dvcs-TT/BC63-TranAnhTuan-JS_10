@@ -11,6 +11,7 @@ var validation = new Validation();
 
 // Lấy thông tin từ UI
 function layThongTinNS(isAdd) {
+  debugger;
   // isAdd = true => thêm nhân sự
   // isAdd = false => cập nhập nhân sự
 
@@ -32,18 +33,18 @@ function layThongTinNS(isAdd) {
         "tbTKNV",
         "Tài khoản không được bỏ trống"
       ) &&
+      validation.kiemPattern(
+        taiKhoan,
+        "tbTKNV",
+        "Tài khoản phải là số",
+        /^[0-9]+$/
+      ) &&
       validation.kiemDoDai(
         taiKhoan,
         "tbTKNV",
         "Tài khoản từ 4 đến 6 ký tự",
         4,
         6
-      ) &&
-      validation.kiemPattern(
-        taiKhoan,
-        "tbTKNV",
-        "Tài khoản phải là số",
-        /^[0-9]+$/
       ) &&
       validation.kiemTrungTk(
         taiKhoan,
@@ -54,7 +55,14 @@ function layThongTinNS(isAdd) {
   }
 
   // Kiểm tra họ tên nhân sự
-  isValid &= validation.kiemRong(hoTen, "tbTen", "Họ tên không được bỏ trống");
+  isValid &=
+    validation.kiemRong(hoTen, "tbTen", "Họ tên không được bỏ trống") &&
+    validation.kiemPattern(
+      hoTen,
+      "tbTen",
+      "Họ tên phải là chữ",
+      /^[a-zA-Z ]*$/
+    );
 
   //Kiểm tra email
   isValid &=
@@ -66,11 +74,40 @@ function layThongTinNS(isAdd) {
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     );
 
-  // Kiểm tra lương cơ bản
-  isValid &= validation.kiemSo(luongCB, "tbLuongCB", "Lương cơ bản phải là số");
+  // Kiểm tra mật khẩu
+  isValid &=
+    validation.kiemRong(matKhau, "tbMatKhau", "Mật khẩu không được bỏ trống") &&
+    validation.kiemPattern(
+      ngayLam,
+      "tbNgay",
+      "Ngày làm không đúng định dạng",
+      /^(?=.*[0-9])(?=.*[A-Z])(?=.*\W)(?!.*\s).{6,10}$/
+    );
+  // Kiểm tra ngày làm
+  isValid &=
+    validation.kiemRong(ngayLam, "tbNgay", "Ngày làm không được bỏ trống") &&
+    validation.kiemPattern(
+      ngayLam,
+      "tbNgay",
+      "Ngày làm không đúng định dạng",
+      /^\d{2}\/\d{2}\/\d{4}$/
+    );
 
-  // Kiểm tra giờ làm
-  isValid &= validation.kiemSo(gioLam, "tbGiolam", "Giờ làm phải là số");
+  // Kiểm tra lương cơ bản
+  isValid &=
+    validation.kiemRong(
+      luongCB,
+      "tbLuongCB",
+      "Lương cơ bản không được bỏ trống"
+    ) &&
+    validation.kiemSo(luongCB, "tbLuongCB", "Lương cơ bản phải là số") &&
+    validation.kiemKhoangGtri(
+      luongCB,
+      "tbLuongCB",
+      "Lương cơ bản từ 1000000 đến 20000000 ký tự",
+      1000000,
+      20000000
+    );
 
   // Kiểm tra chức vụ
   isValid &= validation.kiemChucVu(
@@ -78,6 +115,18 @@ function layThongTinNS(isAdd) {
     "tbChucVu",
     "Vui lòng chọn chức vụ"
   );
+
+  // Kiểm tra giờ làm
+  isValid &=
+    validation.kiemRong(gioLam, "tbGiolam", "Số giờ làm không được bỏ trống") &&
+    validation.kiemSo(gioLam, "tbGiolam", "Giờ làm phải là số") &&
+    validation.kiemKhoangGtri(
+      gioLam,
+      "tbGiolam",
+      "Số giờ làm phải từ 80 đến 200 giờ",
+      80,
+      200
+    );
 
   // Tạo một đối tượng nhân sự từ lớp đối tượng Nhân Sự
   if (!isValid) {
@@ -137,9 +186,9 @@ function renderNhanSuDS(arrNS = nhansuQL.nhansuDS) {
   getElement("tableDanhSach").innerHTML = content;
 }
 
-
 // btn Thêm nhân sự
-getElement("btnThem").onclick = function () {
+getElement("btnThemNV").onclick = function () {
+  debugger;
   // B1: lấy thông tin nhân sự từ hàm layThongTinNS
   var nhanSu = layThongTinNS(true);
 
@@ -197,7 +246,7 @@ function editStaff(taiKhoan) {
   getElement("gioLam").value = nhanSu.gioLam;
 }
 
-getElement("btnUpdate").onclick = function () {
+getElement("btnCapNhat").onclick = function () {
   //Lấy lại thông tin mới của SV sau chỉnh sửa
   var newStaff = layThongTinNS(false);
 
