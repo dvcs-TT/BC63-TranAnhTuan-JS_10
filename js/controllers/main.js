@@ -213,7 +213,7 @@ function renderNhanSuDS(arrNS = nhansuQL.nhansuDS) {
                 </td>
             </tr>
         `;
-  }  
+  }
   getElement("tableDanhSach").innerHTML = content;
 }
 
@@ -226,12 +226,11 @@ getElement("btnThem").onclick = function () {
   getElement("btnThemNV").style.display = "inline-block";
 
   // Ẩn button cập nhật
-  getElement("btnCapNhat").style.display = "none";  
-}
+  getElement("btnCapNhat").style.display = "none";
+};
 
 // btn Thêm nhân sự
 getElement("btnThemNV").onclick = function () {
-  debugger;
   // B1: lấy thông tin nhân sự từ hàm layThongTinNS
   var nhanSu = layThongTinNS(true);
 
@@ -303,10 +302,10 @@ getElement("btnCapNhat").onclick = function () {
     setLocalStorage();
 
     // Hiển thị lại btn thêm sinh viên
-    getElement('btnThemSV').style.display = 'inline-block'
+    getElement("btnThemSV").style.display = "inline-block";
 
     // Ẩn btn cập nhật
-    getElement('btnCapNhat').style.display = 'none';
+    getElement("btnCapNhat").style.display = "none";
 
     // Kích hoạt ô nhập tài khoản
     getElement("tknv").disabled = false;
@@ -316,52 +315,27 @@ getElement("btnCapNhat").onclick = function () {
   }
 };
 
-// Tìm kiếm sinh viên theo tên
-getElement("txtSearch").onkeyup = function () {
-  var valueSearch = getElement("txtSearch").value;
+// Tìm kiếm nhân sự theo loại
+getElement("btnTimNV").onclick = function () {
+  var searchedValue = getElement("searchName").value;
 
-  // chuyển valueSearch về lowercase
-  var valueSearchLowerCase = valueSearch.toLowerCase();
+  // chuyển searchedValue về lowercase
+  var searchedValueLowerCase = searchedValue.toLowerCase();
 
-  // Duyệt mảng danh sách nhân sự
-  var nhansuDSSearch = [];
+  var searchedNhanSuDS = [];
 
   for (var i = 0; i < nhansuQL.nhansuDS.length; i++) {
     var nhanSu = nhansuQL.nhansuDS[i];
 
-    // chuyển tên sinh Viên về dạng lowercase
-    var tenSVLowerCase = nhanSu.hoTen.toLowerCase();
+    // chuyển tên nhân sự về dạng lowercase
+    var loaiNVLowerCase = nhanSu.loaiNV.toLowerCase();
 
     // Nếu tên sv chứa toàn bộ ký tự của value search
-    if (tenSVLowerCase.indexOf(valueSearchLowerCase) !== -1) {
-      nhansuDSSearch.push(nhanSu);
+    if (loaiNVLowerCase.indexOf(searchedValueLowerCase) !== -1) {
+      searchedNhanSuDS.push(nhanSu);
     }
   }
 
   // render UI lại danh sách nhân sự theo kết quả tìm kiếm
-  renderNhanSuDS(nhansuDSSearch);
-};
-
-getElement("btnSearch").onclick = function () {
-  var valueSearch = getElement("txtSearch").value;
-
-  // chuyển valueSearch về lowercase
-  var valueSearchLowerCase = valueSearch.toLowerCase();
-
-  var nhansuDSSearch = [];
-
-  for (var i = 0; i < nhansuQL.listSV.length; i++) {
-    var sv = nhansuQL.listSV[i];
-
-    // chuyển tên sinh Viên về dạng lowercase
-    var tenSVLowerCase = sv.tenSV.toLowerCase();
-
-    // Nếu tên sv chứa toàn bộ ký tự của value search
-    if (tenSVLowerCase.indexOf(valueSearchLowerCase) !== -1) {
-      nhansuDSSearch.push(nhanSu);
-    }
-  }
-
-  // render UI lại danh sách nhân sự theo kết quả tìm kiếm
-  renderNhanSuDS(nhansuDSSearch);
+  renderNhanSuDS(searchedNhanSuDS);
 };

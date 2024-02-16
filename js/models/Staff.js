@@ -42,13 +42,13 @@ function NhanSu(
   this.xepLoai = function () {
     var loaiNvien = ""
     if (this.gioLam >= 192) {
-        loaiNvien = "nhân viên xuất sắc"
+        loaiNvien = "xuất sắc"
     } else if (this.gioLam >= 176 && this.gioLam < 192) {
-        loaiNvien = "nhân viên giỏi"
+        loaiNvien = "giỏi"
     } else if (this.gioLam >= 160 && this.gioLam < 176) {
-        loaiNvien = "nhân viên khá"
+        loaiNvien = "khá"
     } else {
-        loaiNvien = "nhân viên trung bình"
+        loaiNvien = "trung bình"
     }
     
     this.loaiNV = loaiNvien;
