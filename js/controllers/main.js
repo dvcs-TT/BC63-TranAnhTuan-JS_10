@@ -45,6 +45,13 @@ function layThongTinNS(isAdd) {
   // isAdd = true => thêm nhân sự
   // isAdd = false => cập nhập nhân sự
 
+  // Hiện các span thông báo
+  thongbaoHtmlClt = document.getElementsByClassName("sp-thongbao");
+  for (let i = 0; i < thongbaoHtmlClt.length; i++) {
+    const thongbaoSpan = thongbaoHtmlClt[i];
+    thongbaoSpan.style.display = "block";
+  }
+
   var taiKhoan = getElement("tknv").value;
   var hoTen = getElement("name").value;
   var eMail = getElement("email").value;
@@ -110,7 +117,7 @@ function layThongTinNS(isAdd) {
     validation.kiemPattern(
       matKhau,
       "tbMatKhau",
-      "Mật khẩu không đúng định dạng",
+      "Mật khẩu phải có từ 6-10 ký tự (chứa ít nhất 1 chữ số, 1 chữ cái in hoa, 1 ký tự đặc biệt)",
       /^(?=.*[0-9])(?=.*[A-Z])(?=.*\W)(?!.*\s).{6,10}$/
     );
 
