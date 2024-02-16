@@ -28,7 +28,7 @@ function NhanSuQL() {
 
   this.capNhatNS = function (nhanSu) {
     // Tìm index nhân sự
-    var index = this.timViTriSV(nhanSu.maSV);
+    var index = this.timViTriNS(nhanSu.taiKhoan);
 
     // Tiến hành cập nhật nhân sự
     if (index !== -1) {

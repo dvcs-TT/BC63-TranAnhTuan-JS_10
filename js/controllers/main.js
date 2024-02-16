@@ -9,9 +9,39 @@ var nhansuQL = new NhanSuQL();
 // Khởi tạo đối tượng validation từ lớp Validation
 var validation = new Validation();
 
+// Lưu xuống local storage
+function setLocalStorage() {
+  // Lưu danh sách nhân sự vào local storage
+  //B1: chuyển data về string
+  var dtString = JSON.stringify(nhansuQL.nhansuDS);
+  //B2: Lưu vào local storage
+  localStorage.setItem("nhansuDS", dtString);
+}
+
+function getLocalStorage() {
+  //B1: lấy data dưới local storage
+  var data = localStorage.getItem("nhansuDS");
+
+  //B2: Parse data về kiểu dữ liệu ban đầu
+  if (data !== null) {
+    var dataParse = JSON.parse(data);
+
+    // Hiển thị danh sách nhân sự đã lưu ra UI
+    nhansuQL.nhansuDS = dataParse;
+
+    renderNhanSuDS();
+  }
+}
+
+getLocalStorage();
+
+// reset form
+function resetForm() {
+  getElement("formNS").reset();
+}
+
 // Lấy thông tin từ UI
 function layThongTinNS(isAdd) {
-  debugger;
   // isAdd = true => thêm nhân sự
   // isAdd = false => cập nhập nhân sự
 
@@ -78,11 +108,12 @@ function layThongTinNS(isAdd) {
   isValid &=
     validation.kiemRong(matKhau, "tbMatKhau", "Mật khẩu không được bỏ trống") &&
     validation.kiemPattern(
-      ngayLam,
-      "tbNgay",
-      "Ngày làm không đúng định dạng",
+      matKhau,
+      "tbMatKhau",
+      "Mật khẩu không đúng định dạng",
       /^(?=.*[0-9])(?=.*[A-Z])(?=.*\W)(?!.*\s).{6,10}$/
     );
+
   // Kiểm tra ngày làm
   isValid &=
     validation.kiemRong(ngayLam, "tbNgay", "Ngày làm không được bỏ trống") &&
@@ -144,8 +175,9 @@ function layThongTinNS(isAdd) {
     gioLam
   );
 
-  // Tính điểm TB của SV
+  // Tính lương tháng
   nhanSu.tinhLuongThang();
+  // Xếp loại nhân sự
   nhanSu.xepLoai();
 
   return nhanSu;
@@ -173,7 +205,7 @@ function renderNhanSuDS(arrNS = nhansuQL.nhansuDS) {
                         Delete
                     </button>
                     <button 
-                        class="btn btn-success ml-3" 
+                        class="btn btn-success ml-3" data-toggle="modal" data-target="#myModal"
                         onclick="editStaff('${nhanSu.taiKhoan}')"
                     >
                         Edit
@@ -181,9 +213,20 @@ function renderNhanSuDS(arrNS = nhansuQL.nhansuDS) {
                 </td>
             </tr>
         `;
-  }
-
+  }  
   getElement("tableDanhSach").innerHTML = content;
+}
+
+// btn Thêm
+getElement("btnThem").onclick = function () {
+  // Kích hoạt ô nhập tài khoản
+  getElement("tknv").disabled = false;
+
+  // Hiện button thêm nhân sự
+  getElement("btnThemNV").style.display = "inline-block";
+
+  // Ẩn button cập nhật
+  getElement("btnCapNhat").style.display = "none";  
 }
 
 // btn Thêm nhân sự
@@ -220,11 +263,11 @@ function deleteStaff(taiKhoan) {
 
 // Cập nhật sinh viên
 function editStaff(taiKhoan) {
-  // Ẩn button thêm sinh viên
+  // Ẩn button thêm nhân sự
   getElement("btnThemNV").style.display = "none";
 
-  // Hiển thị lại button cập nhật nhân sự
-  getElement("btnCapNhat").classList.remove("d-none");
+  // Hiện button cập nhật
+  getElement("btnCapNhat").style.display = "inline-block";
 
   // Vô hiệu hóa ô nhập tài khoản
   getElement("tknv").disabled = true;
@@ -259,11 +302,11 @@ getElement("btnCapNhat").onclick = function () {
     // lưu lại danh sách nhân sự mới vào local storage
     setLocalStorage();
 
-    // Hiển thị lại btn thêm nhân sự
-    getElement("btnThemNV").style.display = "inline-block";
+    // Hiển thị lại btn thêm sinh viên
+    getElement('btnThemSV').style.display = 'inline-block'
 
     // Ẩn btn cập nhật
-    getElement("btnCapNhat").classList.add("d-none");
+    getElement('btnCapNhat').style.display = 'none';
 
     // Kích hoạt ô nhập tài khoản
     getElement("tknv").disabled = false;
@@ -272,37 +315,6 @@ getElement("btnCapNhat").onclick = function () {
     resetForm();
   }
 };
-
-// Lưu xuống local storage
-function setLocalStorage() {
-  // Lưu danh sách nhân sự vào local storage
-  //B1: chuyển data về string
-  var dtString = JSON.stringify(nhansuQL.nhansuDS);
-  //B2: Lưu vào local storage
-  localStorage.setItem("nhansuDS", dtString);
-}
-
-function getLocalStorage() {
-  //B1: lấy data dưới local storage
-  var data = localStorage.getItem("nhansuDS");
-
-  //B2: Parse data về kiểu dữ liệu ban đầu
-  if (data !== null) {
-    var dataParse = JSON.parse(data);
-
-    // Hiển thị danh sách nhân sự đã lưu ra UI
-    nhansuQL.nhansuDS = dataParse;
-
-    renderNhanSuDS();
-  }
-}
-
-getLocalStorage();
-
-// reset form
-function resetForm() {
-  getElement("formNS").reset();
-}
 
 // Tìm kiếm sinh viên theo tên
 getElement("txtSearch").onkeyup = function () {
